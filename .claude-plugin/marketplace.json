@@ -1,0 +1,15 @@
+{
+  "name": "tigang",
+  "description": "tigang-reminder 提肛提醒插件(健康提醒类)",
+  "owner": {
+    "name": "TardisBooo"
+  },
+  "plugins": [
+    {
+      "name": "tigang-reminder",
+      "source": "./",
+      "description": "每检测到一次 git commit / git push,就在终端提醒做一组提肛运动(凯格尔运动),并累计统计次数",
+      "version": "1.2.0"
+    }
+  ]
+}

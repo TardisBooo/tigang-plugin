@@ -1,0 +1,12 @@
+{
+  "hooks": [
+    {
+      "id": "tigang-detect",
+      "event": "post-tool",
+      "tools": ["bash", "pwsh"],
+      "command": "node <TIGANG_DIR>/adapters/dsh/dsh_detect.js",
+      "timeoutMs": 15000,
+      "enabled": true
+    }
+  ]
+}

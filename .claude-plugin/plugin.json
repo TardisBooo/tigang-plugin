@@ -1,0 +1,12 @@
+{
+  "name": "tigang-reminder",
+  "description": "每检测到一次 git commit / git push,就在终端提醒做一组提肛运动(凯格尔运动),并累计统计次数。支持 Claude Code / Codex CLI / pi / dsh,共享同一份统计。",
+  "version": "1.2.0",
+  "author": {
+    "name": "TardisBooo"
+  },
+  "homepage": "https://github.com/TardisBooo/tigang-plugin",
+  "repository": "https://github.com/TardisBooo/tigang-plugin",
+  "license": "MIT",
+  "keywords": ["health", "hook", "git", "kegel", "reminder"]
+}
