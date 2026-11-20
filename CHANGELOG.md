@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- 为 DSH headless 提供原生安装。在回合结束时通过 stderr 显示提醒，并将 NDJSON 事件流保留在 stdout。
+
 ## 1.3.0
 
 - Codex CLI 可通过 marketplace 安装。它和 Claude Code 共用检测与提醒钩子。

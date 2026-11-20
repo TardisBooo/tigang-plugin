@@ -9,7 +9,7 @@
 | Claude Code 插件 | `~/.claude/` 下的插件注册与缓存 | `~/.claude/tigang-reminder/stats.json`、`pending.json` |
 | Codex CLI 插件 | `~/.codex/` 下的插件注册与缓存 | 同上(共享) |
 | pi | `~/.pi/agent/extensions/` 两个文件 | 同上(共享) |
-| dsh | `$DSH_HOME/hooks.json` 合并 + 社区插件 | 同上(共享) |
+| DSH headless 原生包 | `$DSH_HOME` 中的 headless profile 插件注册 | 同上(共享) |
 
 ## Claude Code
 
@@ -61,6 +61,17 @@ cp hooks/tigang_core.js ~/.pi/agent/extensions/
 卸载:删除上述两个文件。
 
 ## dsh
+
+DSH 0.2.2-rc.1 的 headless profile 支持原生安装。
+
+```bash
+dsh plugin --profile headless add github:TardisBooo/tigang-plugin
+```
+
+在已有 Tigang 手工钩子的 profile 中，先移除旧钩子再安装原生包。回合提醒使用 stderr，
+`--json` 的事件继续写入 stdout。卸载请运行 `dsh plugin --profile headless remove tigang-plugin`。
+
+### 手工适配
 
 ```bash
 dsh plugin --profile web add dsh-plugin-hooks

@@ -102,10 +102,14 @@ cp hooks/tigang_core.js ~/.pi/agent/extensions/
 
 详见 **[adapters/pi/README.md](adapters/pi/README.md)**。
 
-### dsh(DeepSeek Harness)
+### DSH headless（DeepSeek Harness）
 
-依赖社区插件 `dsh-plugin-hooks`,把 `adapters/dsh/hooks.json` 的内容合并进 `$DSH_HOME/hooks.json`。
-详见 **[adapters/dsh/README.md](adapters/dsh/README.md)**。
+```bash
+dsh plugin --profile headless add github:TardisBooo/tigang-plugin
+```
+
+在 DSH 0.2.2-rc.1 中，原生包会在成功提交或推送的回合结束时向 stderr 显示一条提醒。
+`--json` 的事件流通过 stdout 输出。配置和卸载步骤见 [DSH 适配器](adapters/dsh/README.md)。
 
 > 各安装方式会动哪些文件、如何卸载,统一列在 **[INSTALL.md](INSTALL.md)**。
 
@@ -162,7 +166,7 @@ tigang-plugin/
 │   └── tigang_hook.js       # 入口脚本(detect / remind 两模式)
 ├── adapters/
 │   ├── codex/README.md      # Codex 安装和迁移说明
-│   ├── dsh/                 # dsh:dsh_detect.js / dsh_remind.js / hooks.json
+│   ├── dsh/                 # DSH headless 原生包与手工适配器
 │   └── pi/tigang-reminder.ts# pi 扩展:tool_result 检测 + agent_settled 渲染
 ├── commands/
 │   └── tigang-stats.md      # /tigang-stats 查看统计

@@ -1,5 +1,21 @@
 # dsh 适配器(DeepSeek Harness)
 
+## headless 原生包
+
+在 DSH 0.2.2-rc.1 上使用以下命令。
+
+```bash
+dsh plugin --profile headless add github:TardisBooo/tigang-plugin
+```
+
+用 `dsh headless --dump-config` 确认 `tigang-reminder` 条目已加载。执行一次 Git 提交或推送后，
+headless 在当前回合结束时向 stderr 显示一条提醒。使用 `--json` 时，事件流仍可从 stdout 解析。
+安装前，移除同一 profile 中的 Tigang 手工钩子。
+
+卸载命令为 `dsh plugin --profile headless remove tigang-plugin`。
+
+## 手工适配
+
 dsh 的原生插件(Cordis 内核)在进程内运行 `tools/pre-execute`、
 `tools/post-execute` 事件;对外部脚本最实用的路径是社区插件:
 
