@@ -4,7 +4,7 @@
 
 # tigang-reminder · 提肛提醒
 
-**每一次 `git commit` / `git push`,终端都会提醒你做一组提肛运动。**
+**智能体成功执行 `git commit` 或 `git push` 后，终端会提醒你做一组提肛运动。**
 
 A Kegel-exercise reminder that fires on every git commit / push —
 for humans who code with agents.
@@ -24,11 +24,9 @@ for humans who code with agents.
 
 ## 为什么
 
-程序员久坐办公,盆底肌长期受压、血液循环变差。提肛运动(凯格尔运动)可以锻炼盆底肌,有助于预防痔疮、改善局部血液循环,而且随时随地、不动声色就能做。
+长时间写代码时，可以把一次成功的提交或推送当作休息提示。Tigang 在智能体结束当前回合时显示提肛运动提醒，可按需使用。
 
-把提醒挂在 commit / push 上,恰好是工作节奏里天然的"课间铃"—— 你反正要停下来等 agent 干活,顺手来一组。
-
-**为什么是 hook,而不是让 AI"记得提醒你"?** hook 由终端在工具调用时**确定性执行**,不依赖模型的自觉。让模型自己想起来的提醒,和你的 New Year's resolution 一样可靠。
+宿主的钩子负责检测 Git 操作和显示提醒，模型无需生成提醒。
 
 ## 工作原理:提醒追加在 AI 回答末尾,零 token
 
@@ -79,23 +77,27 @@ agent 执行 Bash: git commit / git push
 ### Claude Code(原生插件)
 
 ```bash
-git clone https://github.com/TardisBooo/tigang-plugin.git
-claude plugin marketplace add /path/to/tigang-plugin
+claude plugin marketplace add TardisBooo/tigang-plugin
 claude plugin install tigang-reminder@tigang
 ```
 
 已运行的旧会话执行一次 `/reload-plugins --force` 即可激活,无需重启。
 
-### Codex CLI(0.152+)
+### Codex CLI
 
-在 `~/.codex/config.toml` 末尾追加两个 hook,并在交互会话里执行一次 `/hooks` 完成信任。
-完整配置见 **[adapters/codex/README.md](adapters/codex/README.md)**。
+```bash
+codex plugin marketplace add TardisBooo/tigang-plugin
+codex plugin add tigang-reminder@tigang
+```
+
+在交互会话中执行 `/hooks`，查看并信任这两个钩子。
+从手工配置迁移的步骤见 [Codex 适配器说明](adapters/codex/README.md)。
 
 ### pi(@earendil-works/pi-coding-agent)
 
 ```bash
 cp adapters/pi/tigang-reminder.ts ~/.pi/agent/extensions/
-cp core/tigang_core.js ~/.pi/agent/extensions/
+cp hooks/tigang_core.js ~/.pi/agent/extensions/
 ```
 
 详见 **[adapters/pi/README.md](adapters/pi/README.md)**。
@@ -110,7 +112,7 @@ cp core/tigang_core.js ~/.pi/agent/extensions/
 ## 使用
 
 - 正常让 agent 提交、推送代码即可触发,无需任何额外操作。
-- 查看统计:Claude Code 会话里输入 `/tigang-stats`,或直接看
+- 查看统计:Claude Code 会话里输入 `/tigang-reminder:tigang-stats`,或直接看
   `~/.claude/tigang-reminder/stats.json`。
 - 四个 agent 共享同一份统计(今日次数 / 累计次数 / commit 与 push 各多少)。
 - 提醒语言自动跟随系统语言:**简体中文 / 繁體中文 / English / 日本語 / 한국어 / Español**;
@@ -130,7 +132,7 @@ cp core/tigang_core.js ~/.pi/agent/extensions/
 
 **隐私?** 零网络请求。所有代码只读写本地 `~/.claude/tigang-reminder/` 下的两个 JSON 文件。
 
-**多个会话 / 多个 agent 同时用?** 统计与待提醒全局共享 —— 一个全局健康计数器 😄
+**多个会话或智能体？** 各适配器默认使用同一份本地统计与待提醒文件。
 
 **我自己在终端手动 commit 也想被提醒?** 给 git 配全局 post-commit 模板钩子:
 
@@ -150,13 +152,16 @@ tigang-plugin/
 ├── .claude-plugin/
 │   ├── plugin.json          # Claude Code 插件清单
 │   └── marketplace.json     # marketplace(单插件仓库,source: "./")
-├── core/
-│   └── tigang_core.js       # 共享核心:检测正则 / 统计 / pending / 文案(零依赖)
+├── .agents/plugins/          # Codex marketplace
+├── .codex-plugin/            # Codex 插件清单
+├── core/                     # 适配器兼容路径
 ├── hooks/
-│   ├── hooks.json           # Claude Code:PostToolUse(Bash)+ Stop
+│   ├── hooks.json           # Claude Code 钩子配置
+│   ├── codex-hooks.json     # Codex 钩子配置
+│   ├── tigang_core.js       # 共享检测、统计和提醒文案
 │   └── tigang_hook.js       # 入口脚本(detect / remind 两模式)
 ├── adapters/
-│   ├── codex/README.md      # Codex CLI:config.toml 注册,复用同一入口脚本
+│   ├── codex/README.md      # Codex 安装和迁移说明
 │   ├── dsh/                 # dsh:dsh_detect.js / dsh_remind.js / hooks.json
 │   └── pi/tigang-reminder.ts# pi 扩展:tool_result 检测 + agent_settled 渲染
 ├── commands/

@@ -7,14 +7,14 @@
 | 安装方式 | 写入/修改的文件 | 运行时产生的数据 |
 | --- | --- | --- |
 | Claude Code 插件 | `~/.claude/` 下的插件注册与缓存 | `~/.claude/tigang-reminder/stats.json`、`pending.json` |
-| Codex CLI | `~/.codex/config.toml`(追加两个 hook 块) | 同上(共享) |
+| Codex CLI 插件 | `~/.codex/` 下的插件注册与缓存 | 同上(共享) |
 | pi | `~/.pi/agent/extensions/` 两个文件 | 同上(共享) |
 | dsh | `$DSH_HOME/hooks.json` 合并 + 社区插件 | 同上(共享) |
 
 ## Claude Code
 
 ```bash
-claude plugin marketplace add /path/to/tigang-plugin
+claude plugin marketplace add TardisBooo/tigang-plugin
 claude plugin install tigang-reminder@tigang
 ```
 
@@ -28,41 +28,30 @@ claude plugin uninstall tigang-reminder@tigang
 claude plugin marketplace remove tigang
 ```
 
-## Codex CLI(0.152+)
+## Codex CLI
 
-在 `~/.codex/config.toml`(Windows:`C:\Users\<user>\.codex\config.toml`)末尾追加:
+如果之前已手工配置 Tigang，先移除旧的两条钩子。然后安装插件。
 
-```toml
-[[hooks.PostToolUse]]
-matcher = "^Bash$"
-
-[[hooks.PostToolUse.hooks]]
-type = "command"
-command = 'node <TIGANG_DIR>/hooks/tigang_hook.js detect'
-timeout = 15
-
-[[hooks.Stop]]
-
-[[hooks.Stop.hooks]]
-type = "command"
-command = 'node <TIGANG_DIR>/hooks/tigang_hook.js remind'
-timeout = 15
+```bash
+codex plugin marketplace add TardisBooo/tigang-plugin
+codex plugin add tigang-reminder@tigang
 ```
 
-`<TIGANG_DIR>` 换成本机仓库路径(Windows 下用正斜杠)。
+在交互会话中执行 `/hooks`，查看并信任这两个钩子。需要手工配置时，见
+[Codex 适配器说明](adapters/codex/README.md)。
 
-- **首次使用**:在交互式 codex 会话里执行 `/hooks`,审查并信任这两个 hook。
-  非托管 hook 的信任是 hash 固定的 —— 修改脚本后需要重新信任。
-- Windows 上 Codex 的 agent shell 是 PowerShell,但工具名仍匹配 `Bash`;
-  命令可能是 `git commit -m 'x'; git push` 语法,核心检测已兼容。
+卸载:
 
-卸载:删除上述两个 `[[hooks...]]` 配置块。
+```bash
+codex plugin remove tigang-reminder@tigang
+codex plugin marketplace remove tigang
+```
 
 ## pi
 
 ```bash
 cp adapters/pi/tigang-reminder.ts ~/.pi/agent/extensions/
-cp core/tigang_core.js ~/.pi/agent/extensions/
+cp hooks/tigang_core.js ~/.pi/agent/extensions/
 ```
 
 - 扩展按"同目录的 `./tigang_core.js`"加载核心;若想指向仓库本体,

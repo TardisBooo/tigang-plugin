@@ -8,7 +8,7 @@ pi 的扩展是 TypeScript 模块,由 jiti 直接加载、进程内运行:
 
 ```bash
 cp adapters/pi/tigang-reminder.ts ~/.pi/agent/extensions/
-cp core/tigang_core.js            ~/.pi/agent/extensions/
+cp hooks/tigang_core.js           ~/.pi/agent/extensions/
 ```
 
 扩展默认加载同目录的 `./tigang_core.js`。

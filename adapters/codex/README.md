@@ -1,11 +1,19 @@
-# Codex CLI 适配器(零新代码)
+# Codex CLI 适配器
 
-Codex CLI(0.152+)的 hooks 与 Claude Code **payload 完全兼容**
-(`tool_input.command`、`tool_response`、`hook_event_name`、`Stop` 事件、
-stdout `{"systemMessage": ...}`),因此直接复用 Claude 插件的入口脚本
-`hooks/tigang_hook.js`,只需在 Codex 配置里注册两个 hook。
+Codex 与 Claude Code 共用入口脚本 `hooks/tigang_hook.js`。
 
-## 安装
+## 安装插件
+
+先移除之前手工配置的 Tigang 钩子，避免重复计数。然后安装插件。
+
+```bash
+codex plugin marketplace add TardisBooo/tigang-plugin
+codex plugin add tigang-reminder@tigang
+```
+
+在交互会话中执行 `/hooks`，查看并信任这两个钩子。卸载步骤见 [安装说明](../../INSTALL.md#codex-cli)。
+
+## 手工配置
 
 在 `~/.codex/config.toml`(Windows:`C:\Users\<user>\.codex\config.toml`)末尾追加:
 
@@ -16,14 +24,14 @@ matcher = "^Bash$"
 
 [[hooks.PostToolUse.hooks]]
 type = "command"
-command = 'node <TIGANG_DIR>/hooks/tigang_hook.js detect'
+command = 'node "<TIGANG_DIR>/hooks/tigang_hook.js" detect'
 timeout = 15
 
 [[hooks.Stop]]
 
 [[hooks.Stop.hooks]]
 type = "command"
-command = 'node <TIGANG_DIR>/hooks/tigang_hook.js remind'
+command = 'node "<TIGANG_DIR>/hooks/tigang_hook.js" remind'
 timeout = 15
 ```
 
@@ -47,8 +55,6 @@ timeout = 15
   命令可能是 `git commit -m 'x'; git push` 这类语法 —— 核心检测同时支持
   `;`、`&&`、`||`、`|`、换行分隔,单/双引号内容会被剥离后再匹配,不会误报。
 - `notify` 配置与 hooks 互不干扰,可并存。
-- headless 测试:`codex exec --dangerously-bypass-hook-trust --sandbox danger-full-access "…"`;
-  沙箱的 workspace-write 模式会把 `.git/` 设为只读,测 commit 需要上面的 full-access。
 - 验证 hook 是否触发:观察统计文件,或输出里的 `hook: PostToolUse Completed` /
   `hook: Stop Completed` 字样,或 `[otel] hooks.run` 指标。
 - 卸载:删除上述两个 `[[hooks...]]` 配置块。

@@ -4,9 +4,9 @@
 
 # tigang-reminder
 
-**Every `git commit` / `git push`, your terminal reminds you to do one set of Kegel exercises.**
+**Take a Kegel break after your agent runs a successful `git commit` or `git push`.**
 
-A health nudge for humans who code with agents.
+A movement reminder for people who code with agents.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-green.svg)
@@ -23,11 +23,9 @@ A health nudge for humans who code with agents.
 
 ## Why
 
-Programmers sit for hours. The pelvic floor takes constant pressure and local circulation suffers. Kegel exercises train exactly those muscles — they help prevent hemorrhoids and improve blood flow, and you can do them anywhere, invisibly, mid-meeting.
+A successful commit or push can be a cue to pause during a long coding session. Tigang displays an optional Kegel break reminder when the agent finishes its turn.
 
-Hanging the reminder on commit / push makes it a natural "recess bell" in your work rhythm — you're pausing to wait for the agent anyway, so sneak in a set.
-
-**Why a hook, instead of asking the AI to "remember to remind you"?** Hooks run **deterministically** in the terminal at tool-call time; they don't depend on the model's conscience. A reminder the model has to remember is exactly as reliable as your New Year's resolution.
+The host's hook detects the Git operation and displays the reminder.
 
 ## How it works: the reminder lands at the end of the AI's answer — zero tokens
 
@@ -77,23 +75,27 @@ Follow the README's install instructions for the agent you are, then tell me how
 ### Claude Code (native plugin)
 
 ```bash
-git clone https://github.com/TardisBooo/tigang-plugin.git
-claude plugin marketplace add /path/to/tigang-plugin
+claude plugin marketplace add TardisBooo/tigang-plugin
 claude plugin install tigang-reminder@tigang
 ```
 
 Already-running sessions: run `/reload-plugins --force` once to activate — no restart needed.
 
-### Codex CLI (0.152+)
+### Codex CLI
 
-Append two hooks to `~/.codex/config.toml`, then run `/hooks` once in an interactive session to trust them.
-Full config in **[adapters/codex/README.md](adapters/codex/README.md)**.
+```bash
+codex plugin marketplace add TardisBooo/tigang-plugin
+codex plugin add tigang-reminder@tigang
+```
+
+Open `/hooks` in an interactive session to review and trust the two hooks.
+See the [Codex adapter](adapters/codex/README.md) for migration from manual hooks.
 
 ### pi (@earendil-works/pi-coding-agent)
 
 ```bash
 cp adapters/pi/tigang-reminder.ts ~/.pi/agent/extensions/
-cp core/tigang_core.js ~/.pi/agent/extensions/
+cp hooks/tigang_core.js ~/.pi/agent/extensions/
 ```
 
 See **[adapters/pi/README.md](adapters/pi/README.md)**.
@@ -108,7 +110,7 @@ See **[adapters/dsh/README.md](adapters/dsh/README.md)**.
 ## Usage
 
 - Just let your agent commit and push — nothing else to do.
-- View stats: run `/tigang-stats` in a Claude Code session, or read
+- View stats: run `/tigang-reminder:tigang-stats` in a Claude Code session, or read
   `~/.claude/tigang-reminder/stats.json` directly.
 - All four agents share one set of stats (today / total / commits vs pushes).
 - Reminder language follows your system locale: **English / 简体中文 / 繁體中文 / 日本語 / 한국어 / Español**;
@@ -128,7 +130,7 @@ See **[adapters/dsh/README.md](adapters/dsh/README.md)**.
 
 **Privacy?** Zero network requests. Everything stays in two local JSON files under `~/.claude/tigang-reminder/`.
 
-**Multiple sessions / agents at once?** Stats and pending reminders are shared globally — one global health counter 😄
+**Multiple sessions or agents?** Each installed adapter uses the same local stats and pending reminder files by default.
 
 **I want reminders on my own manual commits too?** Give git a global post-commit template hook:
 
@@ -148,13 +150,16 @@ tigang-plugin/
 ├── .claude-plugin/
 │   ├── plugin.json          # Claude Code plugin manifest
 │   └── marketplace.json     # marketplace (single-plugin repo, source: "./")
-├── core/
-│   └── tigang_core.js       # shared core: detect regex / stats / pending / copy (zero deps)
+├── .agents/plugins/          # Codex marketplace
+├── .codex-plugin/            # Codex plugin manifest
+├── core/                     # compatibility path for existing adapters
 ├── hooks/
-│   ├── hooks.json           # Claude Code: PostToolUse (Bash) + Stop
+│   ├── hooks.json           # Claude Code hook configuration
+│   ├── codex-hooks.json     # Codex hook configuration
+│   ├── tigang_core.js       # shared detection, stats and reminder text
 │   └── tigang_hook.js       # entry script (detect / remind modes)
 ├── adapters/
-│   ├── codex/README.md      # Codex CLI: config.toml registration, same entry script
+│   ├── codex/README.md      # Codex installation and migration
 │   ├── dsh/                 # dsh: dsh_detect.js / dsh_remind.js / hooks.json
 │   └── pi/tigang-reminder.ts# pi extension: tool_result detect + agent_settled render
 ├── commands/

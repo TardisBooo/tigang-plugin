@@ -99,6 +99,24 @@ t("正常输出 → 不跳过", () => {
 });
 
 console.log("\ndetect — 计数 + pending 生命周期:");
+t("响应报告 Git 命令失败时不计数", () => {
+  const { spawnSync } = require("child_process");
+  const path = require("path");
+  const hook = path.join(__dirname, "..", "hooks", "tigang_hook.js");
+  for (const response of [
+    { exitCode: 129, stderr: "error: unknown option" },
+    "error: unknown option invalid-option\nusage: git commit [-a]",
+  ]) {
+    const input = JSON.stringify({
+      tool_input: { command: "git commit --invalid-option" },
+      tool_response: response,
+    });
+    const result = spawnSync(process.execPath, [hook, "detect"], { input, encoding: "utf8" });
+    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.stdout, "");
+    assert.strictEqual(require("fs").existsSync(core.STATS_FILE), false);
+  }
+});
 t("成功 commit:detect 返回 true,统计 total/commit 各 +1", () => {
   assert.strictEqual(core.detect("git commit -m 'x'", "[main 1a2b3c4] fix: typo"), true);
   const s = JSON.parse(require("fs").readFileSync(core.STATS_FILE, "utf8"));

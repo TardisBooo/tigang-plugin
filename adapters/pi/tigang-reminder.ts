@@ -3,7 +3,7 @@
  *
  * 安装(同目录部署,推荐):
  *   cp adapters/pi/tigang-reminder.ts ~/.pi/agent/extensions/
- *   cp core/tigang_core.js           ~/.pi/agent/extensions/
+ *   cp hooks/tigang_core.js          ~/.pi/agent/extensions/
  * 或只复制本文件,并设 TIGANG_SKILL_DIR 指向仓库根目录。
  *
  * 机制(与 Claude Code 插件同构,共享同一份统计):

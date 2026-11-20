@@ -15,7 +15,7 @@
  */
 "use strict";
 
-const core = require("../core/tigang_core");
+const core = require("./tigang_core");
 
 /* PostToolUse:检测 commit/push → 统计 + 记录待提醒,零 stdout */
 function detectMode(raw) {
@@ -27,7 +27,10 @@ function detectMode(raw) {
   }
   const command = (event.tool_input && event.tool_input.command) || "";
   const resp = event.tool_response || {};
-  core.detect(command, JSON.stringify(resp));
+  const exitCode = resp.exit_code ?? resp.exitCode;
+  if (resp.isError || (typeof exitCode === "number" && exitCode !== 0)) return;
+  if (typeof resp === "string" && /^error:/im.test(resp)) return;
+  core.detect(command, typeof resp === "string" ? resp : JSON.stringify(resp));
   // 故意不输出任何内容:不进模型上下文,零 token
 }
 

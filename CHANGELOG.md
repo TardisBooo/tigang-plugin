@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Codex CLI 可通过 marketplace 安装。它和 Claude Code 共用检测与提醒钩子。
+- 在自定义状态目录下，Claude Code 的统计命令读取该目录内的 `stats.json`。
+- 宿主报告 Git 命令退出非零时，统计会跳过这次操作。
+
 ## 1.2.0 — 2026-09-09
 
 多 agent 支持与开源发布。

@@ -9,7 +9,7 @@ Codex CLI、pi、dsh,四个 agent 共享同一份统计。
 
 ## 目录
 
-- `core/tigang_core.js` — 共享核心(检测正则、统计、pending、文案)。所有适配器复用,不要在适配器里复制逻辑。
+- `hooks/tigang_core.js` — 共享核心(检测正则、统计、pending、文案)。所有适配器复用,不要在适配器里复制逻辑。
 - `hooks/` — Claude Code 插件入口(hooks.json 注册 PostToolUse + Stop,tigang_hook.js 是 detect/remind 双模式入口)。
 - `adapters/{codex,dsh,pi}/` — 其他 agent 的接入层与安装说明。
 - `commands/tigang-stats.md` — `/tigang-stats` 查统计。
@@ -29,5 +29,5 @@ Codex CLI、pi、dsh,四个 agent 共享同一份统计。
 
 ## 版本
 
-改动后同步三处版本号(package.json / .claude-plugin/plugin.json / marketplace.json),
-CHANGELOG.md 写"为什么"。
+发布时同步 `package.json`、Claude Code 和 Codex 的插件清单与 marketplace 版本号。
+在 `CHANGELOG.md` 记录改动原因。

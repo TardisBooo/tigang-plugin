@@ -2,8 +2,8 @@
 description: 查看提肛提醒的累计统计(commit/push 触发次数)
 ---
 
-读取统计文件 `~/.claude/tigang-reminder/stats.json`(Windows 下通常是
-`C:\Users\<用户名>\.claude\tigang-reminder\stats.json`),然后简短汇报
+如果设置了 `TIGANG_STATE_DIR`，读取该目录下的 `stats.json`。默认文件为
+`~/.claude/tigang-reminder/stats.json`。读取后简短汇报
 (**用用户操作系统的语言回复**,下方中文示例仅作格式参考):
 
 - 累计提醒总次数,其中 commit / push 各多少次
